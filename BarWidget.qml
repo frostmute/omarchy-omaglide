@@ -13,7 +13,7 @@ BarWidget {
         anchors.fill: parent
         bar: root.bar
         text: "󰟸"
-        tooltipText: "Toggle On-Screen Trackpad"
+        tooltipText: "Toggle Omaglide"
         onPressed: function(buttonCode) {
             if (root.bar)
                 root.bar.run("omarchy-shell shell toggle io.github.frostmute.onscreen-trackpad")

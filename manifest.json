@@ -1,13 +1,13 @@
 {
   "schemaVersion": 1,
   "id": "io.github.frostmute.onscreen-trackpad",
-  "name": "On-Screen Trackpad",
+  "name": "Omaglide",
   "version": "1.0.0",
   "author": "Jonathan J Wagner",
   "license": "MIT",
-  "homepage": "https://github.com/frostmute/omarchy-onscreen-trackpad",
-  "repository": "https://github.com/frostmute/omarchy-onscreen-trackpad",
-  "description": "A touch-first, bar-toggleable relative pointer pad for Omarchy Quattro, powered by ydotool.",
+  "homepage": "https://github.com/frostmute/omarchy-omaglide",
+  "repository": "https://github.com/frostmute/omarchy-omaglide",
+  "description": "Omaglide: a touch-first relative pointer pad for Omarchy tablets, powered by ydotool.",
   "kinds": ["panel", "bar-widget"],
   "keepLoaded": true,
   "entryPoints": {
@@ -15,8 +15,8 @@
     "barWidget": "BarWidget.qml"
   },
   "barWidget": {
-    "displayName": "On-Screen Trackpad",
-    "description": "Toggle the on-screen trackpad",
+    "displayName": "Omaglide",
+    "description": "Toggle Omaglide",
     "category": "Widgets",
     "allowMultiple": false,
     "defaultSection": "center"

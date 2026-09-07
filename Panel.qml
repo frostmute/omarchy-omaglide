@@ -52,8 +52,8 @@ Item {
 
         BorderSurface {
             id: card
-            width: Style.space(300)
-            height: Style.space(225)
+            width: Style.space(500)
+            height: Style.space(360)
             x: panel.width - width - Style.spacing.lg
             y: panel.height - height - Style.spacing.lg
             radius: Style.cornerRadius
@@ -62,10 +62,10 @@ Item {
 
             Text {
                 anchors { top: parent.top; horizontalCenter: parent.horizontalCenter; topMargin: Style.spacing.sm }
-                text: "Trackpad"
+                text: "Omaglide"
                 color: Color.muted
                 font.family: Style.font.family
-                font.pixelSize: Style.font.bodySmall
+                font.pixelSize: Style.font.title
             }
 
             Rectangle {
@@ -82,7 +82,7 @@ Item {
                 DragHandler {
                     id: dragHandler
                     target: null
-                    acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
+                    acceptedDevices: PointerDevice.TouchScreen
                     property real previousX: 0
                     property real previousY: 0
                     onActiveChanged: {
@@ -97,8 +97,23 @@ Item {
                     }
                 }
                 TapHandler {
-                    acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
+                    acceptedDevices: PointerDevice.TouchScreen
                     onDoubleTapped: root.click("0xC0")
+                }
+                // Explicit mouse fallback for layer-shell pointer input.
+                MouseArea {
+                    anchors.fill: parent
+                    property real previousX: 0
+                    property real previousY: 0
+                    onPressed: function(mouse) { previousX = mouse.x; previousY = mouse.y }
+                    onPositionChanged: function(mouse) {
+                        if (!pressed) return
+                        root.pendingX += Math.round((mouse.x - previousX) * 1.6)
+                        root.pendingY += Math.round((mouse.y - previousY) * 1.6)
+                        previousX = mouse.x
+                        previousY = mouse.y
+                    }
+                    onDoubleClicked: root.click("0xC0")
                 }
             }
 
@@ -106,7 +121,7 @@ Item {
                 id: buttonRow
                 anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: Style.spacing.md }
                 spacing: Style.spacing.sm
-                height: Style.space(38)
+                height: Style.space(60)
 
                 Repeater {
                     model: [ { label: "Left click", code: "0xC0" }, { label: "Right click", code: "0xC1" }, { label: "Close", code: "" } ]
@@ -116,11 +131,11 @@ Item {
                         height: buttonRow.height
                         radius: Style.cornerRadius
                         color: buttonArea.pressed ? Color.accent : Util.alpha(Color.foreground, Style.normalFillAlpha)
-                        Text { anchors.centerIn: parent; text: parent.modelData.label; color: Color.foreground; font.family: Style.font.family; font.pixelSize: Style.font.bodySmall }
-                        TapHandler {
+                        Text { anchors.centerIn: parent; text: parent.modelData.label; color: Color.foreground; font.family: Style.font.family; font.pixelSize: Style.font.body }
+                        MouseArea {
                             id: buttonArea
-                            acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Mouse
-                            onTapped: parent.modelData.code ? root.click(parent.modelData.code) : root.close()
+                            anchors.fill: parent
+                            onClicked: parent.modelData.code ? root.click(parent.modelData.code) : root.close()
                         }
                     }
                 }
