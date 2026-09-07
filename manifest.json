@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "io.github.frostmute.onscreen-trackpad",
+  "name": "On-Screen Trackpad",
+  "version": "1.0.0",
+  "author": "Jonathan J Wagner",
+  "license": "MIT",
+  "homepage": "https://github.com/frostmute/omarchy-onscreen-trackpad",
+  "repository": "https://github.com/frostmute/omarchy-onscreen-trackpad",
+  "description": "A touch-first, bar-toggleable relative pointer pad for Omarchy Quattro, powered by ydotool.",
+  "kinds": ["panel", "bar-widget"],
+  "keepLoaded": true,
+  "entryPoints": {
+    "panel": "Panel.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "On-Screen Trackpad",
+    "description": "Toggle the on-screen trackpad",
+    "category": "Widgets",
+    "allowMultiple": false,
+    "defaultSection": "center"
+  }
+}

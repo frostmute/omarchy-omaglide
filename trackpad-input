@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Input backend for the On-Screen Trackpad plugin.
+set -euo pipefail
+
+case "${1:-}" in
+  move)
+    # `--` prevents negative relative deltas from being parsed as options.
+    exec ydotool mousemove -- "${2:?missing x}" "${3:?missing y}"
+    ;;
+  click)
+    exec ydotool click "${2:?missing button}"
+    ;;
+  scroll)
+    exec ydotool mousemove --wheel -- 0 "${2:?missing wheel delta}"
+    ;;
+  *)
+    echo "Usage: ${0##*/} {move X Y|click BUTTON|scroll DELTA}" >&2
+    exit 2
+    ;;
+esac
