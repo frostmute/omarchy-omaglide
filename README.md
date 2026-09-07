@@ -6,6 +6,10 @@
 
 Drag on the pad to move the pointer. Double-tap the pad or use **Left click** to click; use **Right click** for context menus. The panel supports both touchscreen input and ordinary mouse input.
 
+## Omablet suite
+
+Omaglide also works independently. Pair it with [Omablet](https://github.com/frostmute/omarchy-omablet) for tablet-mode controls and [Omaqwerty](https://github.com/frostmute/omarchy-omaqwerty) for a docked touch keyboard.
+
 ## Install
 
 ```sh
