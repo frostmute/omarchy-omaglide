@@ -1,5 +1,7 @@
 # On-Screen Trackpad for Omarchy Quattro
 
+![On-Screen Trackpad preview](preview.png)
+
 A bar-toggleable, touch-first relative pointer pad for Hyprland. Drag on the
 pad to move the cursor, double-tap or use **Left click** to click, and use
 **Right click** for context menus. The normal touchscreen remains the best way
