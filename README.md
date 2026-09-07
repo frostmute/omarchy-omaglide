@@ -52,6 +52,18 @@ It should report `active (running)`.
 The panel does not steal keyboard focus and can be closed with its **Close**
 button.
 
+## Remove
+
+```sh
+omarchy plugin remove io.github.frostmute.onscreen-trackpad
+```
+
+Removal does not remove `ydotool` or revoke the `input` group membership,
+because either may be used by other software. If this plugin is the only user
+of the virtual pointer, disable the service with
+`systemctl --user disable --now ydotool.service`; remove the package or group
+membership only if you no longer need them.
+
 ## Security
 
 `ydotool` has access to Linux's virtual-input interface (`/dev/uinput`) and can
