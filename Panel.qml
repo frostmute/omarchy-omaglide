@@ -15,7 +15,7 @@ Item {
     property bool userMoved: false
 
     // Resolve the bundled script from this plugin's install directory.
-    readonly property string backend: String(Qt.resolvedUrl("trackpad-input")).replace("file://", "")
+    readonly property string backend: decodeURIComponent(String(Qt.resolvedUrl("trackpad-input"))).replace(/^file:\/\//, "")
 
     function open(payloadJson) {
         opened = true
@@ -142,6 +142,7 @@ Item {
                 }
 
                 TapHandler {
+                    acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Stylus
                     onDoubleTapped: root.resetPosition()
                 }
 
@@ -149,6 +150,11 @@ Item {
                     id: headerMouseArea
                     anchors.fill: parent
                     cursorShape: Qt.SizeAllCursor
+                    onPressed: function(mouse) {
+                        // Touch and stylus are handled by the TapHandler; ignore the synthesized mouse press
+                        if (mouse.source !== Qt.MouseEventNotSynthesized)
+                            mouse.accepted = false
+                    }
                     onDoubleClicked: root.resetPosition()
                 }
 
@@ -284,27 +290,41 @@ Item {
                     acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Stylus
                     minimumPointCount: 2
                     maximumPointCount: 2
-                    property real totalDy: 0
-                    property real totalDx: 0
                     property real previousY: 0
+                    property bool tapCandidate: false
+                    property real maxMove: 0
+                    // A tap never activates the handler (it stays under the drag threshold),
+                    // so detect it from the passive grab taken on press and dropped on release.
+                    onGrabChanged: function(transition, point) {
+                        if (transition === PointerDevice.GrabPassive) {
+                            tapCandidate = true
+                            maxMove = 0
+                            pad.isDragging = true
+                        } else if (transition === PointerDevice.UngrabPassive && tapCandidate && !active) {
+                            tapCandidate = false
+                            if (maxMove < 10) {
+                                root.click("0xC1")
+                            }
+                            dragResetTimer.restart()
+                        }
+                    }
+                    onCentroidChanged: {
+                        maxMove = Math.max(maxMove,
+                                           Math.abs(centroid.position.x - centroid.pressPosition.x),
+                                           Math.abs(centroid.position.y - centroid.pressPosition.y))
+                    }
                     onActiveChanged: {
                         if (active) {
                             previousY = 0
-                            totalDy = 0
-                            totalDx = 0
+                            tapCandidate = false
                             pad.isDragging = true
                         } else {
-                            if (Math.abs(totalDy) < 10 && Math.abs(totalDx) < 10) {
-                                root.click("0xC1")
-                            }
                             dragResetTimer.restart()
                         }
                     }
                     onTranslationChanged: {
                         pad.isDragging = true
                         let dy = translation.y - previousY
-                        totalDy += Math.abs(dy)
-                        totalDx += Math.abs(translation.x)
                         root.pendingWheel += Math.round(dy / 10)
                         previousY = translation.y
                     }
@@ -322,7 +342,7 @@ Item {
                     }
                 }
 
-                // Mouse / Trackpoint interaction
+                // Mouse / Trackpoint interaction (touch and stylus use the handlers above)
                 MouseArea {
                     id: padMouseArea
                     anchors.fill: parent
@@ -333,6 +353,10 @@ Item {
                     property real previousY: 0
 
                     onPressed: function(mouse) {
+                        if (mouse.source !== Qt.MouseEventNotSynthesized) {
+                            mouse.accepted = false
+                            return
+                        }
                         totalDistance = 0
                         previousX = mouse.x
                         previousY = mouse.y
@@ -400,6 +424,7 @@ Item {
 
                         TapHandler {
                             id: buttonTapHandler
+                            acceptedDevices: PointerDevice.TouchScreen | PointerDevice.Stylus
                             onTapped: parent.modelData.code ? root.click(parent.modelData.code) : root.close()
                         }
 
@@ -407,6 +432,10 @@ Item {
                             id: buttonArea
                             anchors.fill: parent
                             cursorShape: Qt.PointingHandCursor
+                            onPressed: function(mouse) {
+                                if (mouse.source !== Qt.MouseEventNotSynthesized)
+                                    mouse.accepted = false
+                            }
                             onClicked: parent.modelData.code ? root.click(parent.modelData.code) : root.close()
                         }
                     }
